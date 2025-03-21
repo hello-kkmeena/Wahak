@@ -21,12 +21,16 @@ public class StoreItem extends BaseEntity {
     @Column(nullable = false)
     private Integer storeId;
 
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy for Better Performance 🔥
+    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
+    private ItemCommon item;
+
     @Column(nullable = false)
-    private Integer itemId;
+    private Double price;
 
-    private String price;
+    private Double discount;
 
-    private String discount;
+    private String description;
 
     @Column(nullable = false)
     private Double quantity;
@@ -35,42 +39,17 @@ public class StoreItem extends BaseEntity {
     private QuantityType quantityType;
 
     private Boolean isAvailable;
-    private Boolean isActive;
 
     private String stock;
     private String status;
     private Integer createdBy;
     private Integer updatedBy;
     private String deletedBy;
-
-    private Boolean isFeatured;
-    private Boolean isPopular;
-    private Boolean isTrending;
-    private Boolean isDiscounted;
-    private Boolean isOutOfStock;
     private Boolean isOnSale;
-    private Boolean isOnDiscount;
-    private Boolean isOnTrending;
-    private Boolean isOnPopular;
-    private Boolean isOnFeatured;
-    private Boolean isOnNewArrival;
-    private Boolean isOnBestSeller;
-    private Boolean isOnTopRated;
-    private Boolean isOnRecommended;
+    private Boolean isOutOfStock;
     private Boolean isOnOffer;
-    private Boolean isOnDeal;
-    private Boolean isOnClearance;
-    private Boolean isOnBulk;
-    private Boolean isOnCombo;
-    private Boolean isOnGift;
-    private Boolean isOnFree;
-    private Boolean isOnCashback;
-    private Boolean isOnExchange;
-    private Boolean isOnReturn;
-    private Boolean isOnWarranty;
-    private Boolean isOnGuarantee;
-    private Boolean isOnEMI;
-    private Boolean isOnCOD;
-    private Boolean isOnPrepaid;
+
+    private Integer sequence;
+
 
 }

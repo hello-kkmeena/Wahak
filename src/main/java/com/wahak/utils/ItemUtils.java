@@ -21,4 +21,30 @@ public class ItemUtils {
         BeanUtils.copyProperties(item, storeItem);
         return storeItem;
     }
+
+    public static ItemDto convertItemCommonEntityToDto(ItemCommon item) {
+        ItemDto dto = new ItemDto();
+        BeanUtils.copyProperties(item, dto);
+        return dto;
+    }
+
+    public static ItemDto convertEntityToDto(StoreItem item) {
+        ItemDto dto = new ItemDto();
+        BeanUtils.copyProperties(item, dto);
+        return dto;
+    }
+
+    public static ItemDto convertStoreItemtoITemCard(StoreItem item) {
+
+        ItemDto dto = new ItemDto();
+        dto.setId(item.getId());
+        dto.setName(item.getItem().getName());
+        dto.setImage(item.getItem().getImage());
+        dto.setPrice(item.getPrice());
+        dto.setDiscount(item.getDiscount());
+        dto.setCategory(item.getItem().getCategory());
+        dto.setQuantity(item.getQuantity()+" "+item.getQuantityType());
+        dto.setDescription(item.getItem().getDescription());
+        return dto;
+    }
 }

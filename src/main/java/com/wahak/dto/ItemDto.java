@@ -25,12 +25,11 @@ public class ItemDto {
     private String material;
     private String pattern;
 
-
-    private Integer StoreItemId;
+    private Integer storeItemId;
     private Integer storeId;
 
-    private String price;
-    private String discount;
+    private Double price;
+    private Double discount;
 
     private String quantity;
     private String stock;
@@ -69,4 +68,6 @@ public class ItemDto {
     private Boolean isOnEMI;
     private Boolean isOnCOD;
     private Boolean isOnPrepaid;
+
+    private byte[] image;
 }

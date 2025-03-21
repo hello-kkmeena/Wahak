@@ -6,5 +6,5 @@ package com.wahak.enums;
 public enum QuantityType {
     KG,
     LITRE,
-    PIECE
+    UNIT
 }

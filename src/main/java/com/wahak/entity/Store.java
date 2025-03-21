@@ -1,13 +1,11 @@
 package com.wahak.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author krishna.meena
@@ -27,7 +25,7 @@ public class Store extends BaseEntity {
 
     private String city;
 
-    private String cityId;
+    private Integer cityId;
 
     private String state;
 
@@ -38,7 +36,9 @@ public class Store extends BaseEntity {
     private String phone;
 
 
-
+    @ManyToMany(mappedBy = "stores", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Sanchaalaak> admins;
 
 
 }

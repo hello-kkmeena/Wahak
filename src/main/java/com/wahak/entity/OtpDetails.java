@@ -32,12 +32,16 @@ public class OtpDetails extends BaseEntity{
     @Column(nullable = false)
     private OtpType otpType;
 
+    private String mobile;
+
     @Column(nullable = false)
     private boolean isUsed;
 
     @Column(updatable = false, nullable = false)
     private LocalDateTime expiredAt;
 
-    private int attempts;
+    private Integer attempts;
+
+    private Integer maxAttempts;
 
 }

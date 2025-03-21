@@ -12,9 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"email", "mobile"})
-        })
 public class Chalak extends BaseEntity {
 
     @Id
@@ -27,7 +24,7 @@ public class Chalak extends BaseEntity {
     @Column(nullable = false)
     private String email;
 
-    @Column(unique = true,nullable = false)
+    @Column(nullable = false)
     private String mobile;
 
     @Column(nullable = false)
@@ -76,6 +73,5 @@ public class Chalak extends BaseEntity {
         }else {
             throw new RuntimeException("Chalak is not verified yet");
         }
-
     }
 }

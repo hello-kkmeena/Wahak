@@ -15,4 +15,6 @@ public interface StoreRepository extends JpaRepository<Store,Integer> {
 
    @Query("select id from Store where cityId=:cityId and isActive=true")
     List<Integer> findIdsByCityId(@Param("cityId") Integer cityId);
+
+    Store findFirstByCityId(Integer cityId);
 }

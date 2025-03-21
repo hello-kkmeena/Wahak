@@ -27,6 +27,7 @@ public class StoreController {
         return ResponseEntity.ok(storeService.createStore(store));
     }
 
+    @PostMapping("/update")
     public ResponseEntity<StoreDto> updateStore() {
         return ResponseEntity.ok(null);
     }

@@ -1,5 +1,6 @@
 package com.wahak.entity;
 
+import com.wahak.enums.QuantityType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,6 @@ public class ItemCommon extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
     private String name;
     private String description;
     private String category;
@@ -27,6 +27,7 @@ public class ItemCommon extends BaseEntity {
     private String size;
     private String material;
     private String pattern;
+    private QuantityType quantityType;
 
     @Lob
     @Column(columnDefinition = "LONGBLOB")  // For MySQL, use LONGBLOB for large images

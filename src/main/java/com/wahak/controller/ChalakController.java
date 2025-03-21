@@ -2,13 +2,12 @@ package com.wahak.controller;
 
 import com.wahak.dto.ChalakDto;
 import com.wahak.service.ChalakService;
-import jakarta.validation.Valid;
+
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author krishna.meena
@@ -23,35 +22,47 @@ public class ChalakController {
         this.chalakService = chalakService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<ChalakDto> createChalak(@RequestBody @Valid ChalakDto chalak) {
-        return ResponseEntity.ok(chalakService.create(chalak));
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody ChalakDto chalakDto) {
+
+        Map<String,Object> respone=chalakService.login(chalakDto);
+
+        if((boolean) respone.get("status")) {
+            return ResponseEntity.ok(respone);
+        }
+        return ResponseEntity.internalServerError().body(respone);
     }
 
-    @PostMapping("/validate-otp")
-    public ResponseEntity<Boolean> validateOtp(@RequestBody @Valid ChalakDto optRequest) {
-        return ResponseEntity.ok(chalakService.validateRegistrationOtp(optRequest));
+    @PostMapping("/verify-otp")
+    public ResponseEntity<Object> verifyOTP(@RequestBody ChalakDto chalakDto) {
+        Map<String,Object> respone=chalakService.verifyOTP(chalakDto);
+
+        if((boolean) respone.get("status")) {
+            return ResponseEntity.ok(respone);
+        }
+        return ResponseEntity.internalServerError().body(respone);
     }
 
-    @PostMapping("/enable/{chalakId}")
-    public ResponseEntity<Boolean> enableChalak(@PathParam("chalakId") Integer chalakId){
-        return ResponseEntity.ok(chalakService.enableChalak(chalakId));
+    @GetMapping("/chalak-order")
+    public ResponseEntity<Map<String,Object>> getCommonItemItems(@RequestParam(required = false) String name,
+                                                            @RequestParam(required = false, defaultValue = "0") int pageNo) {
+        return ResponseEntity.ok(chalakService.chalakOrder(name,pageNo));
     }
 
-    @PostMapping("/disable/{chalakId}")
-    public ResponseEntity<Boolean> disableChalak(@PathParam("chalakId") Integer chalakId){
-        return ResponseEntity.ok(chalakService.disableChalak(chalakId));
+    @PostMapping("/{orderId}/update-order")
+    public ResponseEntity<Object> updateOrder(@PathParam("orderId") Integer orderId) {
+        Map<String,Object> respone=chalakService.updateOrderStatus(orderId);
+
+        if((boolean) respone.get("status")) {
+            return ResponseEntity.ok(respone);
+        }
+        return ResponseEntity.internalServerError().body(respone);
     }
 
-    @PostMapping("/block/{chalakId}")
-    public ResponseEntity<Boolean> blockChalak(@PathParam("chalakId") Integer chalakId){
-        return ResponseEntity.ok(chalakService.blockChalak(chalakId));
-    }
 
-    @PostMapping("/unblock/{chalakId}")
-    public ResponseEntity<Boolean> unBlockChalak(@PathParam("chalakId") Integer chalakId){
-        return ResponseEntity.ok(chalakService.unBlockChalak(chalakId));
-    }
+
+
+
 
 
 }
