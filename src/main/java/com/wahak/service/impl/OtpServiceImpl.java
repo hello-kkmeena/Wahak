@@ -47,11 +47,16 @@ public class OtpServiceImpl implements OtpService {
     @Override
     public boolean validateOtp(String otp, OtpType otpType, Integer userId) {
 
-        OtpDetails otpDetails = otpDetailsRepository.findLatestUnusedOtp( userId,otpType).orElseGet(null);
-        if(isValidOtp(otpDetails,otp) ) {
-            otpDetails.setUsed(true);
-            otpDetailsRepository.save(otpDetails);
-            return true;
+        try {
+            OtpDetails otpDetails = otpDetailsRepository.findLatestUnusedOtp(userId, otpType).orElseGet(null);
+            if (isValidOtp(otpDetails, otp)) {
+                otpDetails.setUsed(true);
+                otpDetailsRepository.save(otpDetails);
+                return true;
+            }
+        }catch (Exception e){
+            logger.error("Error while validating otp",e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }
@@ -114,8 +119,8 @@ public class OtpServiceImpl implements OtpService {
         return otpDetails != null
                 && !otpDetails.isUsed()
                 && otpDetails.getOtp().equals(Integer.parseInt(otp))
-                && otpDetails.getExpiredAt().isBefore(LocalDateTime.now(ZoneId.of("UTC")))
-                && otpDetails.getAttempts() < maxCount;
+                && otpDetails.getExpiredAt().isAfter(LocalDateTime.now(ZoneId.of("UTC")))
+                && (otpDetails.getAttempts() == null ? 0 :otpDetails.getAttempts()) < maxCount;
     }
 
 

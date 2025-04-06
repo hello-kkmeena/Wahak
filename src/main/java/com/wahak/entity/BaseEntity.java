@@ -31,7 +31,7 @@ public abstract class BaseEntity {
     private LocalDateTime deletedOn;
 
     @Column(nullable = false)
-    private boolean isActive;
+    protected boolean isActive;
 
     public void delete() {
         this.isActive = false;

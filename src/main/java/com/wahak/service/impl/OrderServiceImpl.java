@@ -1,18 +1,16 @@
 package com.wahak.service.impl;
 
 import com.wahak.dto.OrderDto;
-import com.wahak.entity.Order;
-import com.wahak.entity.OrderInvoice;
-import com.wahak.entity.OrderItemMapping;
-import com.wahak.entity.StoreItem;
+import com.wahak.entity.*;
 import com.wahak.enums.OrderStatus;
-import com.wahak.repository.OrderInvoiceRepository;
-import com.wahak.repository.OrderItemMappingRepository;
-import com.wahak.repository.OrderRepository;
-import com.wahak.repository.StoreItemRepository;
+import com.wahak.repository.*;
 import com.wahak.service.OrderAssignment;
 import com.wahak.service.OrderService;
+import com.wahak.utils.AuthenticatedUserUtil;
 import com.wahak.utils.OrderUtility;
+import io.micrometer.common.util.StringUtils;
+import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.tomcat.util.buf.ToStringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,18 +41,36 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderAssignment orderAssignment;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
 
 
     @Override
     @Transactional
     public OrderDto createOrder(OrderDto orderDto) {
 
-
         validateOrder(orderDto);
+        String chalakId= AuthenticatedUserUtil.getAuthenticatedUserId();
+        Integer userId= StringUtils.isBlank(chalakId) ? 1 : Integer.parseInt(chalakId);
+        User user=userRepository.findByActiveId(userId).orElseGet(null);
+        ValiateUserForOrder(user);
+
+        Integer addressId=orderDto.getAddressId();
+        if(addressId==null){
+            throw new IllegalArgumentException("AddressId is required");
+        }
+        Address address=addressRepository.findById(addressId).orElseGet(null);
+        if(address==null){
+            throw new IllegalArgumentException("Address not found");
+        }
+
         List<StoreItem> items= storeItemRepository.findByStoreIdAndItemIdIn(orderDto.getStoreId(),orderDto.getItemQuantity().keySet());
 
         double itemcount=items.size();
-
         Double totalItemPrice= OrderUtility.gettotalItemprice(items,orderDto);
         Double deliveryCharges= OrderUtility.getDeliveryCharge(items,orderDto);
         Double taxAmount= OrderUtility.getTaxOnItems(items,orderDto);
@@ -70,14 +86,14 @@ public class OrderServiceImpl implements OrderService {
         invoice.setTotalAmount(totalItemPrice+deliveryCharges+taxAmount+otherCharges-discountAmount);
         invoice=orderInvoiceRepository.save(invoice);
 
-
         Order order=new Order();
         order.setStoreId(orderDto.getStoreId());
 //        order.setOrderInvoice(invoice);
         order.setOrderStatus(OrderStatus.PENDING);
-        order.setAddressId(orderDto.getAddressId());
+        order.setAddress(address);
         order.setTotalAmount(invoice.getTotalAmount());
         order.setActive(true);
+        order.setUser(user);
         order=orderRepository.save(order);
 
         List<OrderItemMapping> orderItemMappings = new ArrayList<>();
@@ -99,6 +115,21 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setId(order.getId());
 
         return orderDto;
+    }
+
+    private void ValiateUserForOrder(User user) {
+
+        if(user != null) {
+            if(user.isActive() == false) {
+                throw new IllegalArgumentException("User is not active");
+            }
+            if(user.isEnabled() == false) {
+                throw new IllegalArgumentException("User is not enabled");
+            }
+            if(user.isBlocked()) {
+                throw new IllegalArgumentException("User is blocked");
+            }
+        }
     }
 
     @Override

@@ -23,7 +23,11 @@ public class OrderInvoice extends BaseEntity {
     private Double taxAmount;
     private Double otherCharges;
     private Double totalAmount;
-    private Integer orderId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     private PaymentMode paymentMode;
 
     @OneToOne

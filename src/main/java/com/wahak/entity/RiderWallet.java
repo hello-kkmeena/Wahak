@@ -13,14 +13,16 @@ import lombok.Setter;
 @Entity
 public class RiderWallet extends BaseEntity{
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     private Double amount;
 
     private Double maxAmount;
 
-    private Integer riderId;
-
-    @Id
     @OneToOne
-    @JoinColumn(name = "riderId", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "rider_id", referencedColumnName = "id",nullable = false)
     private Chalak rider;
 }

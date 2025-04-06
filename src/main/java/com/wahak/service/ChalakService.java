@@ -2,6 +2,7 @@ package com.wahak.service;
 
 import com.wahak.dto.ChalakDto;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Map;
 
@@ -11,9 +12,9 @@ import java.util.Map;
 public interface ChalakService {
     ChalakDto create(@Valid ChalakDto chalak);
 
-    Boolean validateRegistrationOtp(@Valid ChalakDto optRequest);
+    Boolean validateRegistrationOtp( ChalakDto optRequest);
 
-    Boolean enableChalak(Integer chalakId);
+    Boolean enableChalak(@NotBlank Integer chalakId);
 
     Boolean blockChalak(Integer chalakId);
 
