@@ -13,9 +13,10 @@ import java.util.Optional;
  */
 public interface OrderRiderMappingRepository extends JpaRepository<OrderRiderMapping,Integer> {
 
-    @Query("SELECT orm FROM OrderRiderMapping orm WHERE orm.riderId=?1 order by orm.createdAt desc")
-    List<OrderRiderMapping> findChalakOrder(String chalakId, Pageable pageable);
+    @Query(value="SELECT orm2.* FROM order_rider_mapping orm2 WHERE orm2.rider_id=?1 order by orm2.created_at desc",
+            nativeQuery = true)
+    List<OrderRiderMapping> findChalakOrder(Integer chalakId, Pageable pageable);
 
-    @Query("SELECT orm FROM OrderRiderMapping orm WHERE orm.orderId=?1 AND orm.riderId=?2")
+    @Query(value = "SELECT orm.* FROM order_rider_mapping orm WHERE orm.order_id=?1 AND orm.rider_id=?2",nativeQuery = true)
     Optional<OrderRiderMapping> findByOrderIdAndRiderId(Integer orderId, String chalakId);
 }

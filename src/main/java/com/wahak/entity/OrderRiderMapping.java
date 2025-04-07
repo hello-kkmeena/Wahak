@@ -19,19 +19,14 @@ public class OrderRiderMapping extends BaseEntity {
     private Integer id;
 
     @Column(nullable = false)
-    private Integer riderId;
-
-    @Column(nullable = false)
     private OrderStatus orderStatus;
 
-    @Column(nullable = false)
-    private Integer orderId;
 
     @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id",nullable = false)
     private Order order;
 
     @OneToOne
-    @JoinColumn(name = "rider_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "rider_id", referencedColumnName = "id", nullable = false)
     private Chalak rider;
 }

@@ -1,13 +1,18 @@
 package com.wahak.service.impl;
 
+import com.wahak.dto.AddressDto;
 import com.wahak.dto.UserDTO;
+import com.wahak.entity.Address;
 import com.wahak.entity.User;
 import com.wahak.entity.UserTokenMapper;
+import com.wahak.repository.AddressRepository;
 import com.wahak.repository.UserRepository;
 import com.wahak.repository.UserTokenMapperRepository;
 import com.wahak.service.EmailService;
 import com.wahak.service.UserService;
+import com.wahak.utils.AuthenticatedUserUtil;
 import com.wahak.utils.EntityConverterUtils;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
 
    private final UserTokenMapperRepository userTokenMapperRepository;
+    private final AddressRepository addressRepository;
 
     @Value("${passowrd.base.url}")
     private String baseUrl;
@@ -35,10 +41,11 @@ public class UserServiceImpl implements UserService {
 
 
 
-    public UserServiceImpl(UserRepository userRepository, EmailService emailService, UserTokenMapperRepository userTokenMapperRepository) {
+    public UserServiceImpl(UserRepository userRepository, EmailService emailService, UserTokenMapperRepository userTokenMapperRepository, AddressRepository addressRepository) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.userTokenMapperRepository = userTokenMapperRepository;
+        this.addressRepository = addressRepository;
     }
 
     @Override
@@ -78,5 +85,25 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUser(UserDTO user) {
 
         return null;
+    }
+
+    @Override
+    public AddressDto addAddress(AddressDto addressDto) {
+
+        String chalakId= AuthenticatedUserUtil.getAuthenticatedUserId();
+        Integer userId= StringUtils.isBlank(chalakId) ? 1 : Integer.parseInt(chalakId);
+
+        Address address=new Address();
+        address.setUserId(userId);
+        address.setAddress(addressDto.getAddress());
+        address.setCity(addressDto.getCity());
+        address.setLandmark(addressDto.getLandmark());
+        address.setPincode(addressDto.getPincode());
+        address.setLang(addressDto.getLang());
+        address.setLat(addressDto.getLat());
+        addressRepository.save(address);
+
+        addressDto.setId(address.getId());
+        return addressDto;
     }
 }

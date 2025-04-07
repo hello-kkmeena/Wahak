@@ -11,7 +11,6 @@ import com.wahak.repository.OrderRiderMappingRepository;
 import com.wahak.repository.StoreRepository;
 import com.wahak.service.OrderAssignment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +36,6 @@ public class OrderAssignmentImpl implements OrderAssignment {
     private OrderRiderMappingRepository orderRiderMappingRepository;
 
     @Override
-    @Async
     public void assignOrder(Order order) {
 
         Store store=storeRepository.findById(order.getStoreId()).orElseGet(null);
@@ -49,11 +47,11 @@ public class OrderAssignmentImpl implements OrderAssignment {
             throw new IllegalArgumentException("No Rider Available");
         }
         Chalak chalak= riders.stream().findFirst().get();
+
         OrderRiderMapping orderRiderMapping=new OrderRiderMapping();
         orderRiderMapping.setOrderStatus(OrderStatus.PENDING);
         orderRiderMapping.setRider(chalak);
         orderRiderMapping.setOrder(order);
-        orderRiderMapping.setRiderId(chalak.getId());
         orderRiderMappingRepository.save(orderRiderMapping);
     }
 }

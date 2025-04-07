@@ -24,7 +24,7 @@ public class Chalak extends BaseEntity {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String mobile;
 
     @Column(nullable = false)
@@ -37,16 +37,11 @@ public class Chalak extends BaseEntity {
     private String country;
     private String zip;
 
-    @Column(columnDefinition = "DEFAULT 'false'")
-    @Setter(AccessLevel.NONE)
+    @Column(nullable = false)
     private boolean isVerified;
 
-    @Column(columnDefinition = "DEFAULT 'false'")
-    @Setter(AccessLevel.NONE)
-    private boolean isActive;
 
-    @Column(columnDefinition = "DEFAULT 'false'")
-    @Setter(AccessLevel.NONE)
+    @Column(nullable = false)
     private boolean isBlocked;
 
     public void markVerify() {
@@ -54,11 +49,11 @@ public class Chalak extends BaseEntity {
     }
 
     public void doActivate() {
-        this.isActive = true;
+        super.isActive = true;
     }
 
     public void deActivate() {
-        this.isActive = false;
+        super.isActive = false;
     }
 
     public void doBlock() {

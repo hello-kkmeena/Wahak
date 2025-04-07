@@ -7,12 +7,14 @@ import com.wahak.enums.OrderStatus;
 import com.wahak.enums.OtpType;
 import com.wahak.repository.ChalakRepository;
 import com.wahak.repository.OrderRiderMappingRepository;
+import com.wahak.repository.RiderWalletRepository;
 import com.wahak.service.ChalakService;
 import com.wahak.service.OrderService;
 import com.wahak.service.OtpService;
 import com.wahak.service.SMSService;
 import com.wahak.utils.AuthenticatedUserUtil;
 import com.wahak.utils.ChalakUtils;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,15 +43,17 @@ public class ChalakServiceImpl implements ChalakService {
     private final SMSService smsService;
     private final OrderRiderMappingRepository orderRiderMappingRepository;
     private final OrderService orderService;
+    private final RiderWalletRepository riderWalletRespository;
 
 
 
-    public ChalakServiceImpl(ChalakRepository chalakRepository, OtpService otpService, SMSService smsService, OrderRiderMappingRepository orderRiderMappingRepository, OrderService orderService) {
+    public ChalakServiceImpl(ChalakRepository chalakRepository, OtpService otpService, SMSService smsService, OrderRiderMappingRepository orderRiderMappingRepository, OrderService orderService, RiderWalletRepository riderWalletRespository) {
         this.chalakRepository = chalakRepository;
         this.otpService = otpService;
         this.smsService = smsService;
         this.orderRiderMappingRepository = orderRiderMappingRepository;
         this.orderService = orderService;
+        this.riderWalletRespository = riderWalletRespository;
     }
 
     @Override
@@ -59,20 +63,26 @@ public class ChalakServiceImpl implements ChalakService {
         Chalak entity = ChalakUtils.convertDtoToEntity(chalak);
         chalakRepository.save(entity);
         String otp=otpService.generateRegistartionVerificationOtp(entity);
-
         sendMessage(entity,otp);
-        return null;
+        return ChalakUtils.convertEntityToDto(entity);
     }
 
     @Override
     public Boolean validateRegistrationOtp(ChalakDto optRequest) {
 
-        Chalak chalak=chalakRepository.findById(optRequest.getId()).orElseGet(null);
+        Chalak chalak=chalakRepository.findByMobile(optRequest.getMobile()).orElseGet(null);
         if(isValidchalakForRegistration(chalak)) {
             boolean isValid=otpService.validateOtp(optRequest.getOtp(), OtpType.CHALAK_REGISTRATION,chalak.getId());
+
             if(isValid) {
+                RiderWallet riderWallet=new RiderWallet();
+                riderWallet.setRider(chalak);
+                riderWallet.setActive(true);
+                riderWallet.setMaxAmount(500d);
+                riderWallet.setAmount(0d);
                 chalak.markVerify();
                 chalakRepository.save(chalak);
+                riderWalletRespository.save(riderWallet);
                 return true;
             }
         }
@@ -164,10 +174,11 @@ public class ChalakServiceImpl implements ChalakService {
 
         String chalakId= AuthenticatedUserUtil.getAuthenticatedUserId();
 
-        Sort sort = Sort.by(Sort.Order.desc("createdAt"));
+        chalakId = StringUtils.isBlank(chalakId) ? 1+"" :chalakId;
+        Sort sort = Sort.by(Sort.Order.desc("created_at"));
         Pageable pageable = PageRequest.of(pageNo, CHALAK_ORDER_PAGE_SIZE, sort);
 
-        List<OrderRiderMapping> orders=orderRiderMappingRepository.findChalakOrder(chalakId,pageable);
+        List<OrderRiderMapping> orders=orderRiderMappingRepository.findChalakOrder(Integer.valueOf(chalakId),pageable);
 
         List<ChalakOrderDTO> currentOrders=new ArrayList<>();
         List<ChalakOrderDTO> previousOrders=new ArrayList<>();
@@ -183,7 +194,7 @@ public class ChalakServiceImpl implements ChalakService {
             dto.setAddress(address.getAddress());
             dto.setLang(address.getLang());
             dto.setLat(address.getLat());
-            dto.setPaymentStatus(order.getPaymentStatus().name());
+            dto.setPaymentStatus(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : null);
             dto.setOrderStatus(order.getOrderStatus().name());
             dto.setAmount(order.getTotalAmount()+"");
             dto.setOrderStatus(order.getOrderStatus().name());

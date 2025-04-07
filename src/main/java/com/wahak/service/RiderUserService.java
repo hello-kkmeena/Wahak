@@ -19,8 +19,12 @@ import java.util.Optional;
 @Service
 public class RiderUserService implements UserDetailsService {
 
-    @Autowired
-    private ChalakRepository chalakRepository;
+
+    private final ChalakRepository chalakRepository;
+
+    public RiderUserService(ChalakRepository chalakRepository) {
+        this.chalakRepository = chalakRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

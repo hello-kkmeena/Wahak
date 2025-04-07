@@ -18,13 +18,18 @@ import java.io.IOException;
 /**
  * @author krishna.meena
  */
-@Component public class RiderAuthenticationFilter extends OncePerRequestFilter {
+@Component
+public class RiderAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private RiderJwtUtils riderJwtUtils;
 
-    @Autowired
-    private RiderUserService userDetailsService;
+    private final RiderJwtUtils riderJwtUtils;
+
+    private final RiderUserService userDetailsService;
+
+    public RiderAuthenticationFilter(RiderJwtUtils riderJwtUtils, RiderUserService userDetailsService) {
+        this.riderJwtUtils = riderJwtUtils;
+        this.userDetailsService = userDetailsService;
+    }
 
 
     @Override

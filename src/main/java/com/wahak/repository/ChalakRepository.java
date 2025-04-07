@@ -19,12 +19,11 @@ public interface ChalakRepository extends JpaRepository<Chalak,Integer> {
     @Query("SELECT o FROM OtpDetails o WHERE o.isUsed = false AND o.attempts < 10 ORDER BY o.createdAt DESC LIMIT 1")
     Optional<OtpDetails> findLatestUnusedOtp(int attempts, int userId, OtpType otpType);
 
-    @Query("SELECT c FROM Chalak c " +
-            "inner join RiderStoreAvailability rsa on rsa.riderId=c.id " +
-            "inner join RiderWallet rw on rw.riderId=c.id " +
-            "WHERE c.isVerified = true AND c.isActive = true AND c.isBlocked=false " +
-            "AND rsa.storeId=?1 AND rw.amount < rw.maxAmount" +
-            " ORDER BY rw.amount DESC")
+    @Query(value = "SELECT c.* FROM chalak c " +
+            "inner join rider_wallet rw on rw.rider_id=c.id " +
+            "WHERE c.is_verified = true AND c.is_active = true AND c.is_blocked=false " +
+            " AND rw.amount < rw.max_amount" +
+            " ORDER BY rw.amount DESC",nativeQuery = true)
     List<Chalak> findAvailableRiders(Integer id);
 
     @Query("SELECT c FROM Chalak c where c.id=?1 AND c.isVerified = true AND c.isActive = true AND c.isBlocked=false ")
@@ -32,4 +31,6 @@ public interface ChalakRepository extends JpaRepository<Chalak,Integer> {
 
     @Query("SELECT c FROM Chalak c WHERE c.mobile=?1 AND c.isVerified = true AND c.isActive = true AND c.isBlocked=false ")
     Optional<Chalak> findByMobileActive(@NotBlank(message = "mobile is required") String mobile);
+
+    Optional<Chalak> findByMobile(@NotBlank(message = "mobile is required") String mobile);
 }

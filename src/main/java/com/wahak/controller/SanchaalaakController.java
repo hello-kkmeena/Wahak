@@ -1,9 +1,7 @@
 package com.wahak.controller;
 
 import com.wahak.dto.ChalakDto;
-import com.wahak.dto.ItemDto;
 import com.wahak.dto.SanchaalaakDTO;
-import com.wahak.dto.StoreDto;
 import com.wahak.entity.Sanchaalaak;
 import com.wahak.service.ChalakService;
 import com.wahak.service.SanchaalaakService;
@@ -45,27 +43,25 @@ public class SanchaalaakController {
 
 
     @PostMapping("/disable/{chalakId}")
-    public ResponseEntity<Boolean> disableChalak(@PathParam("chalakId") Integer chalakId){
+    public ResponseEntity<Boolean> disableChalak(@PathVariable("chalakId") Integer chalakId){
         return ResponseEntity.ok(chalakService.disableChalak(chalakId));
     }
 
     @PostMapping("/block/{chalakId}")
-    public ResponseEntity<Boolean> blockChalak(@PathParam("chalakId") Integer chalakId){
+    public ResponseEntity<Boolean> blockChalak(@PathVariable("chalakId") Integer chalakId){
         return ResponseEntity.ok(chalakService.blockChalak(chalakId));
     }
 
-    // TODO
-    // move this to Sanchaalaak Controller
+
     @PostMapping("/unblock/{chalakId}")
-    public ResponseEntity<Boolean> unBlockChalak(@PathParam("chalakId") Integer chalakId){
+    public ResponseEntity<Boolean> unBlockChalak(@PathVariable("chalakId") Integer chalakId){
         return ResponseEntity.ok(chalakService.unBlockChalak(chalakId));
     }
 
-    // TODO
-    // move this to Sanchaalaak Controller
-    @PostMapping("/enable/{chalakId}")
-    public ResponseEntity<Boolean> enableChalak(@PathParam("chalakId") Integer chalakId){
-        return ResponseEntity.ok(chalakService.enableChalak(chalakId));
+
+    @PostMapping("/enable/{id}")
+    public ResponseEntity<Boolean> enableChalak(@PathVariable("id") Integer id){
+        return ResponseEntity.ok(chalakService.enableChalak(id));
     }
 
     @GetMapping("/get-details")

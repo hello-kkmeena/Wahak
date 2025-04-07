@@ -1,5 +1,6 @@
 package com.wahak.controller;
 
+import com.wahak.dto.AddressDto;
 import com.wahak.dto.UserDTO;
 import com.wahak.service.UserService;
 import jakarta.validation.Valid;
@@ -28,6 +29,12 @@ public class UserController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO user) {
         return ResponseEntity.ok(userService.updateUser(user));
+    }
+
+    @PostMapping("add-address")
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<AddressDto> addAddress(@RequestBody @Valid AddressDto addressDto) {
+        return ResponseEntity.ok(userService.addAddress(addressDto));
     }
 
 

@@ -3,8 +3,11 @@ package com.wahak.entity;
 import com.wahak.enums.OrderStatus;
 import com.wahak.enums.PaymentStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * @author krishna.meena
@@ -19,23 +22,30 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer userId;
+    @Column(nullable = false)
     private OrderStatus orderStatus;
+
     private Integer storeId;
-    private Integer addressId;
+
+    @Column(nullable = false)
     private Double totalAmount;
+
+    @Column(nullable = false)
     private PaymentStatus paymentStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private OrderInvoice orderInvoice;
+    private List<OrderInvoice> orderInvoice;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+//    @Column(name = "user_id",nullable = false)
+//    private Integer userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = true, updatable = false)
     private User user;
 
-    @OneToOne
-    @JoinColumn(name = "address_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", referencedColumnName = "id",insertable=true, updatable=true)
     private Address address;
 
 

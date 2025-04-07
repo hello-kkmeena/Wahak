@@ -4,7 +4,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-@Component
 public class CustomAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
     public CustomAuthenticationToken(UserDetails ud) {
