@@ -12,7 +12,6 @@ WORKDIR /build
 COPY . .
 RUN mvn clean package -DskipTests
 
-
 # ------ Stage 2: Run ------
 
 FROM openjdk:23
@@ -25,6 +24,9 @@ COPY --from=builder /build/target/Wahak-0.0.1-SNAPSHOT.jar /app/Wahak-0.0.1-SNAP
 #COPY target/Wahak-0.0.1-SNAPSHOT.jar /app/Wahak-0.0.1-SNAPSHOT.jar
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "Wahak-0.0.1-SNAPSHOT.jar","--spring.profiles.active=dev" ,">","output.txt"]
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "Wahak-0.0.1-SNAPSHOT.jar","--spring.profiles.active=dev"]
 
 # docker build -t docker .

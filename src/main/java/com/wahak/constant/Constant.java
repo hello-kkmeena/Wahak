@@ -8,4 +8,6 @@ public class Constant {
     public static final int HOME_PAGE_PAGINATED_ITEM_COUNT=20;
 
     public static final double DEFAULT_DELIVERY_CHARGE=10;
+
+    public static final int RIDER_DEFAULT_PAGE_SIZE=10;
 }

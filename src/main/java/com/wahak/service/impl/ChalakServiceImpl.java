@@ -15,6 +15,8 @@ import com.wahak.service.SMSService;
 import com.wahak.utils.AuthenticatedUserUtil;
 import com.wahak.utils.ChalakUtils;
 import io.micrometer.common.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,7 +39,6 @@ import java.util.Map;
 public class ChalakServiceImpl implements ChalakService {
 
     private static final int CHALAK_ORDER_PAGE_SIZE = 20;
-
     private final ChalakRepository chalakRepository;
     private final OtpService otpService;
     private final SMSService smsService;
@@ -45,7 +46,7 @@ public class ChalakServiceImpl implements ChalakService {
     private final OrderService orderService;
     private final RiderWalletRepository riderWalletRespository;
 
-
+    private static final Logger logger=LoggerFactory.getLogger(ChalakServiceImpl.class);
 
     public ChalakServiceImpl(ChalakRepository chalakRepository, OtpService otpService, SMSService smsService, OrderRiderMappingRepository orderRiderMappingRepository, OrderService orderService, RiderWalletRepository riderWalletRespository) {
         this.chalakRepository = chalakRepository;
@@ -61,6 +62,7 @@ public class ChalakServiceImpl implements ChalakService {
     public ChalakDto create(ChalakDto chalak) {
 
         Chalak entity = ChalakUtils.convertDtoToEntity(chalak);
+        entity.setCity("test");
         chalakRepository.save(entity);
         String otp=otpService.generateRegistartionVerificationOtp(entity);
         sendMessage(entity,otp);
@@ -70,10 +72,10 @@ public class ChalakServiceImpl implements ChalakService {
     @Override
     public Boolean validateRegistrationOtp(ChalakDto optRequest) {
 
+        logger.info("validateRegistrationOtp: "+optRequest.toString());
         Chalak chalak=chalakRepository.findByMobile(optRequest.getMobile()).orElseGet(null);
         if(isValidchalakForRegistration(chalak)) {
             boolean isValid=otpService.validateOtp(optRequest.getOtp(), OtpType.CHALAK_REGISTRATION,chalak.getId());
-
             if(isValid) {
                 RiderWallet riderWallet=new RiderWallet();
                 riderWallet.setRider(chalak);

@@ -4,8 +4,10 @@ import com.wahak.entity.Chalak;
 import com.wahak.entity.OtpDetails;
 import com.wahak.enums.OtpType;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,4 +35,11 @@ public interface ChalakRepository extends JpaRepository<Chalak,Integer> {
     Optional<Chalak> findByMobileActive(@NotBlank(message = "mobile is required") String mobile);
 
     Optional<Chalak> findByMobile(@NotBlank(message = "mobile is required") String mobile);
+
+    @Query("SELECT c FROM Chalak c WHERE " +
+            "(:name IS NULL OR c.mobile LIKE %:name%) " +
+            "AND (:isActive IS NULL OR c.isActive = :isActive) " +
+            "AND (:isBlock IS NULL OR c.isBlocked = :isBlock) " +
+            " AND c.isVerified = true")
+    List<Chalak> getChalak(String name, Boolean isActive, Boolean isBlock, Pageable pageable);
 }

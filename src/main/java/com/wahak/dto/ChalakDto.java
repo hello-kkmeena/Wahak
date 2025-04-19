@@ -31,6 +31,9 @@ public class ChalakDto {
     private String state;
     private String country;
     private String zip;
+    private boolean isVerified;
+    private boolean isBlocked;
+    private boolean isActive;
 
     @Pattern(regexp = "^[1-9]\\d{3}$", message = "OTP must be a 4-digit number")
     private String otp;

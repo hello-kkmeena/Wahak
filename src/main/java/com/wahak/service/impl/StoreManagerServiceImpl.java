@@ -87,12 +87,10 @@ public class StoreManagerServiceImpl implements StoreManagerService {
     public ItemDto createStoreItem(ItemDto item, Integer storeId) {
 
         ItemCommon common=itemCommonRepository.findById(item.getId()).orElse(null);
-
         if(common==null) {
             return null;
         }
         StoreItem storeItem = new StoreItem();
-
         storeItem.setStoreId(item.getStoreId());
         storeItem.setQuantity(Double.valueOf(item.getQuantity()));
         storeItem.setPrice(item.getPrice());
@@ -100,12 +98,11 @@ public class StoreManagerServiceImpl implements StoreManagerService {
         storeItem.setId(item.getStoreItemId());
         storeItem.setQuantityType(common.getQuantityType() != null ? common.getQuantityType() : QuantityType.KG);
         storeItem.setItem(common);
+        storeItem.setStoreId(storeId);
         storeItem.setActive(true);
-
-
         storeItemRepository.save(storeItem);
-
-        return null;
+        item.setId(storeItem.getId());
+        return item;
     }
 
     @Override

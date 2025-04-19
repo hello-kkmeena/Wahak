@@ -8,6 +8,7 @@ import com.wahak.service.SanchaalaakService;
 import com.wahak.service.StoreService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,13 @@ public class SanchaalaakController {
 
     @Autowired private ChalakService chalakService;
 
+    @GetMapping("/get-chalak")
+    public ResponseEntity<List<ChalakDto>> getChalak(@RequestParam(required = false) String mobile,
+                                                     @RequestParam(required = false, defaultValue = "0") int pageNo,
+                                                     @RequestParam(required = false) Boolean isActive,
+                                                     @RequestParam(required = false) Boolean isBlocked) {
+        return ResponseEntity.ok(sanchaalaakService.getChalak(mobile,pageNo,isActive,isBlocked));
+    }
 
     @PostMapping("/createChalak")
     public ResponseEntity<ChalakDto> createChalak(@RequestBody @Valid ChalakDto chalak) {
@@ -42,10 +50,7 @@ public class SanchaalaakController {
     }
 
 
-    @PostMapping("/disable/{chalakId}")
-    public ResponseEntity<Boolean> disableChalak(@PathVariable("chalakId") Integer chalakId){
-        return ResponseEntity.ok(chalakService.disableChalak(chalakId));
-    }
+
 
     @PostMapping("/block/{chalakId}")
     public ResponseEntity<Boolean> blockChalak(@PathVariable("chalakId") Integer chalakId){
@@ -58,6 +63,10 @@ public class SanchaalaakController {
         return ResponseEntity.ok(chalakService.unBlockChalak(chalakId));
     }
 
+    @PostMapping("/disable/{chalakId}")
+    public ResponseEntity<Boolean> disableChalak(@PathVariable("chalakId") Integer chalakId){
+        return ResponseEntity.ok(chalakService.disableChalak(chalakId));
+    }
 
     @PostMapping("/enable/{id}")
     public ResponseEntity<Boolean> enableChalak(@PathVariable("id") Integer id){

@@ -1,5 +1,6 @@
 package com.wahak.service;
 
+import com.wahak.dto.ChalakDto;
 import com.wahak.entity.Sanchaalaak;
 
 import java.util.List;
@@ -9,6 +10,6 @@ import java.util.List;
  */
 public interface SanchaalaakService {
     Sanchaalaak fetchSanchalak();
-
     Sanchaalaak createSanchalak(Sanchaalaak sanchaalaak);
+    List<ChalakDto> getChalak(String mobile, int pageNo, Boolean isActive, Boolean isBlocked);
 }

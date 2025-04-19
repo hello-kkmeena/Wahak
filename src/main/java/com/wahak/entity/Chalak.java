@@ -40,7 +40,6 @@ public class Chalak extends BaseEntity {
     @Column(nullable = false)
     private boolean isVerified;
 
-
     @Column(nullable = false)
     private boolean isBlocked;
 
